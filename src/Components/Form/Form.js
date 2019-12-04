@@ -1,15 +1,29 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 
 class Form extends Component{
     constructor(props){
         super(props)
         this.state={
             image:'',
-            product:'',
-            price:''
+            name:'',
+            price:'',
+            currentProductID: null
         }
     this.handleChange=this.handleChange.bind(this);
-    this.handleInput=this.handleInput.bind(this);
+    this.handleSubmit=this.handleSubmit.bind(this);
+    this.cancel=this.cancel.bind(this);
+    }
+
+    componentDidUpdate(prevProps){
+        if(prevProps.currentProduct!==this.props.currentProduct){
+            this.setState({
+                image: this.props.currentProduct.image,
+                name: this.props.currentProduct.name,
+                price: this.props.currentProduct.price,
+                currentProductID: this.props.currentProduct.id
+            })
+        }
     }
 
     handleChange(e){
@@ -21,14 +35,25 @@ class Form extends Component{
         console.log(this.state)
     }
 
-    handleInput(){
-    // ======== this function is supposed to clear the input fields ======== (Part 1, Step 1)
+    handleSubmit(){
+        axios.post('/api/product',this.state)
+            .then(res => {
+                this.setState({
+                    image:'',
+                    name:'',
+                    price:''
+                })
+            })
+        this.props.getFN()
+    }
+
+    cancel(){
         this.setState({
             image:'',
-            product:'',
-            price:''
+            name:'',
+            price:'',
+            currentProductID: null,
         })
-        console.log(this.state);
     }
 
     render(){
@@ -38,19 +63,27 @@ class Form extends Component{
                 <input 
                     name='image'
                     onChange={this.handleChange}
+                    placeholder='image'
                     autoComplete='off'/>
                 <input 
-                    name='product'
+                    name='name'
                     onChange={this.handleChange}
+                    placeholder='name'
                     autoComplete='off'/>
                 <input 
                     name='price'
                     onChange={this.handleChange}
+                    placeholder='price'
                     autoComplete='off'/>
                 <button
-                    onClick={this.handleInput}>
+                    onClick={this.cancel}>
                     Cancel</button>
-                <button>Add to Inventory</button>
+                {this.state.currentProductID === null ? 
+                <button
+                    onClick={this.handleSubmit}>Add to Inventory</button>
+                :
+                <button>Save Changes</button>
+                }
             </div>
         )
     }
