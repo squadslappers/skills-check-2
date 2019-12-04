@@ -10,9 +10,10 @@ class Form extends Component{
             price:'',
             currentProductID: null
         }
-    this.handleChange=this.handleChange.bind(this);
-    this.handleSubmit=this.handleSubmit.bind(this);
-    this.cancel=this.cancel.bind(this);
+
+        this.handleChange=this.handleChange.bind(this);
+        this.handleSubmit=this.handleSubmit.bind(this);
+        this.handleSaveEdit=this.handleSaveEdit.bind(this);
     }
 
     componentDidUpdate(prevProps){
@@ -36,6 +37,7 @@ class Form extends Component{
     }
 
     handleSubmit(){
+        console.log(this.state)
         axios.post('/api/product',this.state)
             .then(res => {
                 this.setState({
@@ -44,16 +46,29 @@ class Form extends Component{
                     price:''
                 })
             })
+            console.log(this.state)
         this.props.getFN()
     }
 
-    cancel(){
+    cancel = () => {
         this.setState({
-            image:'',
+            image: '',
             name:'',
             price:'',
-            currentProductID: null,
+            currentProductID: null
         })
+    }
+
+    handleSaveEdit(id, body){
+        axios.put(`/api/product/${id}`, body)
+            .then(res => {
+                this.setState({
+                    image: '',
+                    name: '',
+                    price:''
+                })
+            })
+        this.props.getFN()
     }
 
     render(){
@@ -79,10 +94,13 @@ class Form extends Component{
                     onClick={this.cancel}>
                     Cancel</button>
                 {this.state.currentProductID === null ? 
-                <button
-                    onClick={this.handleSubmit}>Add to Inventory</button>
-                :
-                <button>Save Changes</button>
+                    <button
+                        onClick={this.handleSubmit}>
+                        Add to Inventory</button>
+                    :
+                    <button
+                        onClick={()=>this.handleSaveEdit()}>
+                        Save Changes</button>
                 }
             </div>
         )

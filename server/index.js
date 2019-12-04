@@ -18,6 +18,6 @@ massive(CONNECTION_STRING).then(db => {
 app.get('/api/inventory',controller.getProducts)
 app.post('/api/product',controller.addProduct)
 app.delete('/api/inventory/:id',controller.deleteProduct)
-app.put('/api/inventory/:id',)
+app.put('/api/inventory/:id',controller.editProduct)
 
 app.listen(SERVER_PORT, () => console.log(`server running on ${SERVER_PORT}`))

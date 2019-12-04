@@ -29,8 +29,11 @@ module.exports = {
     
     editProduct: (req, res) => {
         const dbInstance = req.app.get('db');
-        const {params, query} = req;
+        const {params} = req;
+        const {name, price, image} = req.body
 
-        dbInstance.edit_product
+        dbInstance.edit_product([name, price, image, params.id])
+            .then(()=> res.sendStatus(200))
+            .catch(err => res.status(500).send(err))
     }
 }
